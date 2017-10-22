@@ -27,7 +27,9 @@ def query(input_date, input_route):
     F_blocks = open(out_file, 'w')
     writer_blocks = csv.writer(F_blocks)
     
-    blocks = b.Block()
+    blocks = []
+    temp_block = b.Block()
+    
     trip = next(reader_trips)
     times1 = next(reader_times) # See below for explanation.
     #times2 = times1
@@ -36,7 +38,7 @@ def query(input_date, input_route):
             
     trip_count = 0
     for trip in reader_trips:        
-        if trip[1] != input_date: continue
+        if input_date != "" and trip[1] != input_date: continue
         trip_count += 1
         
         while times1[0] != trip[2]:
@@ -59,10 +61,15 @@ def query(input_date, input_route):
                 break                
         depart = times2[1]
         
-        blocks.add_trip(trip[6], trip[2], trip[3], depart, arrival)
-    
-    
-    blocks.write_block(writer_blocks)
+        if temp_block.get_bid() == "" or temp_block.get_bid() == trip[6]:
+            temp_block.add_trip(trip[6], trip[2], trip[3], depart, arrival)
+        else:
+            blocks.insert(0, temp_block)
+            temp_block = b.Block()
+            temp_block.add_trip(trip[6], trip[2], trip[3], depart, arrival)
+        
+    for block in blocks:
+        block.write_block(writer_blocks)
 
     F_dates.close()
     F_trips.close()
