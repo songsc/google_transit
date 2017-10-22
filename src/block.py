@@ -7,9 +7,25 @@ import trip as t
 class Block():
     
     def __init__(self):
+        self.bid = ""
+        self.num_trips = 0
+        self.utilization = 0
         self.trips = []
+        
+    def set_bid(self):
+        self.bid = bid
+        
+    def get_bid(self):
+        return self.bid
+        
+    def inc_trip(self):
+        self.num_trips = self.num_trips + 1
+        
+    def set_trip(self, num_trips):
+        self.num_trips = num_trips
             
     def add_trip(self, bid, tid, headsign, depart, arrival):
+        if self.bid == "": self.bid = bid
         trip = t.Trip(bid, tid, headsign, depart, arrival)
         self.trips.insert(0, trip)
 
