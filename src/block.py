@@ -24,9 +24,9 @@ class Block():
     def set_trip(self, num_trips):
         self.num_trips = num_trips
             
-    def add_trip(self, bid, tid, headsign, depart, arrival):
+    def add_trip(self, bid, tid, direct, headsign, origin, depart, destin, arrival, shape):
         if self.bid == "null": self.bid = bid
-        trip = t.Trip(bid, tid, headsign, depart, arrival)
+        trip = t.Trip(bid, tid, direct, headsign, origin, depart, destin, arrival, shape)
         self.trips.insert(0, trip)
 
     def print_block(self):
