@@ -9,7 +9,32 @@ const app = express();
 const fs = require('fs');
 
 app.get('/', function (req, res) {
-    res.send('Hello World!');
+    const host = req.headers['host'];
+    var d = new Date();
+    var year = d.getFullYear();
+    var month = d.getMonth() + 1;
+    if (month < 10) month = '0' + month;
+    var day = d.getDate();
+    if (day < 10) day = '0' + day;
+    var date = year + '' + month + '' + day;
+    
+    var output = '<p>Google Transit Static Feed Parser for GO Transit</p>' +
+                 '<br>' +
+                 '<p>To search the trips of a sepecific route: </p>' +
+                 '<p>Use the following link format: ' + host + '/date/yyyymmdd/route/xx </p>' +
+                 '<p>Example: <a href=\"http://' + host + '/date/' + date + '/route/21\">' +
+                 'http://' + host + '/date/' + date + '/route/21</a></p>' +
+                 '<br>' +
+                 '<p>To search the trips of a sepecific block (also known as run number): </p>' +
+                 '<p>Use the following link format: ' + host + '/date/yyyymmdd/block/xxxx </p>' +
+                 '<p>Example: <a href=\"http://' + host + '/date/' + date + '/block/01A\">' +
+                 'http://' + host + '/date/' + date + '/block/01A</a></p>' +
+                 '<br>' +
+                 '<p>To search the timetable of a sepecific trip: </p>' +
+                 '<p>Use the following link format: ' + host + '/date/yyyymmdd/trip/xxxx </p>' +
+                 '<p>Example: <a href=\"http://' + host + '/date/' + date + '/trip/908\">' +
+                 'http://' + host + '/date/' + date + '/trip/908</a></p>';
+    res.send(output);
 });
 
 app.get('/date/:date/route/:route', function (req, res) {
@@ -63,13 +88,13 @@ function findTrips(host, filename, date, constriant, value, res) {
             trip_array[1] = trip_array[1].slice(trip_array[1].indexOf('-') + 1);
             switch (constriant) {
                 case 'route':
-                    if (trip_array[1].slice(0, trip_array[1].indexOf('-')).search(value) > -1) {
+                    if (trip_array[1].slice(0, trip_array[1].indexOf('-')) === value) {
                         //output = output + toHTML(host, date, trip_array);
                         output_list.push(trip_array);
                     }
                     break;
                 case 'block':
-                    if (trip_array[0].search(value) > -1) {
+                    if (trip_array[0] === value) {
                         //output = output + toHTML(host, date, trip_array);
                         output_list.push(trip_array);
                     }
@@ -120,7 +145,7 @@ function findStops(host, filename, date, constriant, value, res) {
             stop_array[1] = stop_array[1].slice(stop_array[1].indexOf('-') + 1);
             switch (constriant) {
                 case 'trip':
-                    if (stop_array[1].slice(stop_array[1].indexOf('-') + 1).search(value) > -1) {
+                    if (stop_array[1].slice(stop_array[1].indexOf('-') + 1) === value) {
                         output_list.push(stop_array);
                     }
                     break;
