@@ -28,6 +28,19 @@ class Block():
         if self.bid == "null": self.bid = bid
         trip = t.Trip(bid, tid, direct, headsign, origin, depart, destin, arrival, shape)
         self.trips.insert(0, trip)
+        
+    def add_trip_ref(self, trip):
+        if self.bid == "null": self.bid = trip.bid
+        self.trips.insert(0, trip)
+        
+    def add_stop(self, tid, stop_id, stop_name, time, seq, lat, lon):
+        for trip in self.trips:
+            if trip.tid == tid:
+                trip.add_stop(stop_id, stop_name, time, seq, lat, lon)
+                
+    def write_stops(self, writer):
+        for trip in self.trips:
+            trip.write_stops(writer)
 
     def print_block(self):
         for trip in self.trips:
