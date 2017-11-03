@@ -169,6 +169,5 @@ function toHTML(host, date, line_array) {
 }
 
 function toHTML2(host, date, line_array) {
-    return '<p>' + line_array[3] + ': ' + line_array[4] + '</p>';
-            
+    return '<p>' + line_array[3] + ': ' + line_array[4] + '</p>';            
 }
