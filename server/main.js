@@ -157,8 +157,13 @@ function findStops(host, filename, date, constriant, value, res) {
     lineReader.on('close', function () {
         if (constriant === 'trip') {
             output_list.sort(function(a, b) {
-                // Sort based on stop sequence           
-                return (a[5] - b[5]);
+                var time_a = a[4].split(':');
+                var time_b = b[4].split(':');
+                // Sort based on departure time         
+                if (time_a[0] > time_b[0]) return 1;
+                if (time_a[0] < time_b[0]) return -1;
+                if (time_a[1] > time_b[1]) return 1;
+                if (time_a[1] < time_b[1]) return -1;
             });
         }
         
