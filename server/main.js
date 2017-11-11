@@ -29,22 +29,37 @@ wss.on('connection', function (ws, req) {
             const date = query.data.date.replace(/-/g, "");
             const route = query.data.route;    
             const file = 'trips/' + date + '_trips.txt';
-
-            helper.findTrips('', file, date, 'route', route, ws);
+            
+            if (helper.checkFile(file)) {
+                helper.findTrips('', file, date, 'route', route, ws);
+            }
+            else {
+                ws.send('File not found!');
+            }
         }
         else if (query.type === 'block') {
             const date = query.data.date.replace(/-/g, "");
             const block = query.data.block;    
             const file = 'trips/' + date + '_trips.txt';
-
-            helper.findTrips('', file, date, 'block', block, ws);
+            
+            if (helper.checkFile(file)) {
+                helper.findTrips('', file, date, 'block', block, ws);
+            }
+            else {
+                ws.send('File not found!');
+            }
         }
         else if (query.type === 'trip') {
             const date = query.data.date.replace(/-/g, "");
             const trip = query.data.trip;    
             const file = 'stops/' + date + '_stops.txt';
-
-            helper.findStops('', file, date, 'trip', trip, ws);
+            
+            if (helper.checkFile(file)) {
+                helper.findStops('', file, date, 'trip', trip, ws);
+            }
+            else {
+                ws.send('File not found!');
+            }
         }
     });  
 });
@@ -53,8 +68,8 @@ wss.on('connection', function (ws, req) {
 // Backend App
 
 const app = express();
-app.listen(3001, function () {
-    console.log('Backend app listening on port 3001!');
+app.listen(8080, function () {
+    console.log('Backend app listening on port 8080!');
 });
 
 app.get('/', function (req, res) {
@@ -93,7 +108,12 @@ app.get('/date/:date/route/:route', function (req, res) {
     const file = 'trips/' + date + '_trips.txt';
     console.log(req.params);
 
-    helper.findTrips(host, file, date, 'route', route, res);
+    if (helper.checkFile(file)) {
+        helper.findTrips(host, file, date, 'route', route, res);
+    }
+    else {
+        res.send('File not found!');
+    }
 });
 
 app.get('/date/:date/block/:block', function (req, res) {
@@ -103,7 +123,12 @@ app.get('/date/:date/block/:block', function (req, res) {
     const file = 'trips/' + date + '_trips.txt';
     console.log(req.params);
     
-    helper.findTrips(host, file, date, 'block', block, res);
+    if (helper.checkFile(file)) {
+        helper.findTrips(host, file, date, 'block', block, res);
+    }
+    else {
+        res.send('File not found!');
+    }
 });
 
 app.get('/date/:date/trip/:trip', function (req, res) {
@@ -113,7 +138,12 @@ app.get('/date/:date/trip/:trip', function (req, res) {
     const file = 'stops/' + date + '_stops.txt';
     console.log(req.params);
     
-    helper.findStops(host, file, date, 'trip', trip, res);
+    if (helper.checkFile(file)) {
+        helper.findStops(host, file, date, 'trip', trip, res);
+    }
+    else {
+        res.send('File not found!');
+    }
 });
 
 app.post('/', function (req, res) {
