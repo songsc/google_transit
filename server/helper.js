@@ -192,3 +192,8 @@ exports.toJSON = function (host, date, line_array) {
 exports.toJSON2 = function (host, date, line_array) {
     return [line_array[3], line_array[4]];            
 };
+
+exports.checkFile = function (file) {
+    if(fs.existsSync(file)) return true;
+    return false;
+}
