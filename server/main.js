@@ -15,8 +15,8 @@ const helper = require('./helper.js');
 
 const exp_app = express();
 const server = http.createServer(exp_app);
-server.listen(3002, function listening() {
-    console.log('Frontend app listening on port 3002!');
+server.listen(8081, function listening() {
+    console.log('Frontend app listening on port 8081!');
 });
 
 const wss = new WebSocket.Server({ server });
@@ -81,23 +81,24 @@ app.get('/', function (req, res) {
     var day = d.getDate();
     if (day < 10) day = '0' + day;
     var date = year + '' + month + '' + day;
+    console.log(req.ip);
     
     var output = '<p>Google Transit Static Feed Parser for GO Transit</p>' +
                  '<br>' +
-                 '<p>To search the trips of a sepecific route: </p>' +
+                 '<p>To search the trips of a spcific route: </p>' +
                  '<p>Use the following link format: ' + host + '/date/yyyymmdd/route/xx </p>' +
                  '<p>Example: <a href=\"http://' + host + '/date/' + date + '/route/21\">' +
-                 'http://' + host + '/date/' + date + '/route/21</a></p>' +
+                 'https://' + host + '/date/' + date + '/route/21</a></p>' +
                  '<br>' +
-                 '<p>To search the trips of a sepecific block (also known as run number): </p>' +
+                 '<p>To search the trips of a specific block (also known as run number): </p>' +
                  '<p>Use the following link format: ' + host + '/date/yyyymmdd/block/xxxx </p>' +
                  '<p>Example: <a href=\"http://' + host + '/date/' + date + '/block/01A\">' +
-                 'http://' + host + '/date/' + date + '/block/01A</a></p>' +
+                 'https://' + host + '/date/' + date + '/block/01A</a></p>' +
                  '<br>' +
-                 '<p>To search the timetable of a sepecific trip: </p>' +
+                 '<p>To search the timetable of a specific trip: </p>' +
                  '<p>Use the following link format: ' + host + '/date/yyyymmdd/trip/xxxx </p>' +
                  '<p>Example: <a href=\"http://' + host + '/date/' + date + '/trip/908\">' +
-                 'http://' + host + '/date/' + date + '/trip/908</a></p>';
+                 'https://' + host + '/date/' + date + '/trip/908</a></p>';
     res.send(output);
 });
 
@@ -106,7 +107,7 @@ app.get('/date/:date/route/:route', function (req, res) {
     const date = req.params.date.replace(/-/g, "");
     const route = req.params.route;    
     const file = 'trips/' + date + '_trips.txt';
-    console.log(req.params);
+    console.log(req.ip, req.params);
 
     if (helper.checkFile(file)) {
         helper.findTrips(host, file, date, 'route', route, res);
@@ -121,7 +122,7 @@ app.get('/date/:date/block/:block', function (req, res) {
     const date = req.params.date.replace(/-/g, "");
     const block = req.params.block;    
     const file = 'trips/' + date + '_trips.txt';
-    console.log(req.params);
+    console.log(req.ip, req.params);
      
     if (helper.checkFile(file)) {
         helper.findTrips(host, file, date, 'block', block, res);
@@ -136,7 +137,7 @@ app.get('/date/:date/trip/:trip', function (req, res) {
     const date = req.params.date.replace(/-/g, "");
     const trip= req.params.trip;    
     const file = 'stops/' + date + '_stops.txt';
-    console.log(req.params);
+    console.log(req.ip, req.params);
     
     if (helper.checkFile(file)) {
         helper.findStops(host, file, date, 'trip', trip, res);
@@ -147,5 +148,5 @@ app.get('/date/:date/trip/:trip', function (req, res) {
 });
 
 app.post('/', function (req, res) {
-    console.log('Not yet implemented!@#$');
+    console.log(req.ip, req.params);
 });
