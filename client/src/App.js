@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
+import Table from './TableBlock.js';
 
 
 class App extends React.Component {
-    ws = new WebSocket('ws://192.168.0.13:3002');
+    ws = new WebSocket('ws://127.0.0.1:8081');
     
     constructor(props) {
         super(props);
@@ -12,7 +13,8 @@ class App extends React.Component {
             route: '',
             block: '',
             trip: '',
-            result: ''
+            result: null,
+            display: 'empty'
         };
         this.dateChange = this.dateChange.bind(this);
         this.routeChange = this.routeChange.bind(this);
@@ -21,16 +23,29 @@ class App extends React.Component {
         this.routeSubmit = this.routeSubmit.bind(this);
         this.blockSubmit = this.blockSubmit.bind(this);
         this.tripSubmit = this.tripSubmit.bind(this);
+        this.routeClick = this.routeClick.bind(this);
+        this.blockClick = this.blockClick.bind(this);
+        this.tripClick = this.tripClick.bind(this);
     }
     
     componentDidMount() {
         this.ws.onmessage = function (res) {
             var data = JSON.parse(res.data);
             if (data.type === 'result_trips') {
-                this.setState({result: this._displayTrips(data.data)});
+                this.setState({result: this._displayTable(data.data)});
+                this.setState({display: 'trips'});
             }  
             if (data.type === 'result_stops') {
-                this.setState({result: this._displayStops(data.data)});
+                this.setState({result: this._displayTable(data.data)});
+                if(data.data.route !== '')
+                    this.setState({route: data.data.route});
+                else
+                    this.setState({route: ''});
+                if(data.data.block !== '')
+                    this.setState({block: data.data.block});
+                else
+                    this.setState({block: ''});
+                this.setState({display: 'stops'});
             }
         }.bind(this);
     }
@@ -87,6 +102,39 @@ class App extends React.Component {
         event.preventDefault();
     }
     
+    routeClick(route) {
+        this.ws.send (
+                JSON.stringify({
+                    type: 'route',
+                    data: {
+                        date: this.state.date,
+                        route: route
+                    }
+                }));           
+    }
+    
+    blockClick(block) {
+        this.ws.send (
+                JSON.stringify({
+                    type: 'block',
+                    data: {
+                        date: this.state.date,
+                        block: block
+                    }
+                }));           
+    }
+    
+    tripClick(trip) {
+        this.ws.send (
+                JSON.stringify({
+                    type: 'trip',
+                    data: {
+                        date: this.state.date,
+                        trip: trip
+                    }
+                }));           
+    }
+    
     render() {
         return (
             <div className="dashboard">
@@ -132,63 +180,30 @@ class App extends React.Component {
                 <br />
                 
                 <br />
-                <div dangerouslySetInnerHTML={{__html:this.state.result}}></div>
+                
+                <Table rows={this.state.result}
+                       route={this.state.route}
+                       block={this.state.block}
+                       display={this.state.display}
+                       routeClick={this.routeClick}
+                       blockClick={this.blockClick}
+                       tripClick={this.tripClick}
+                />
             </div>
                 );
-    }
+    }    
     
-    _displayTrips(data) {
-        var display = '<table style="width:100%">';
-        display = display + '<tr>' +
-                            '<th>Block ID</th>' +
-                            '<th>Route</th>' +
-                            '<th>Trip ID</th>' +
-                            '<th>Trip Description</th>' +
-                            '<th>Origin</th>' +
-                            '<th>Departure Time</th>' +
-                            '<th>Destination</th>' +
-                            '<th>Arrival Time</th>' +
-                            '<th>Map</th>' +
-                            '</tr>';
+    _displayTable (data) {
+        var table = [];
         data.result.forEach(function (line) {
-            display = display + '<tr>' +
-                      '<td>' + line[0] + '</td>' + 
-                      '<td>' + line[1] + '</td>' + 
-                      '<td>' + line[2] + '</td>' + 
-                      '<td>' + line[3] + '</td>' + 
-                      '<td>' + line[4] + '</td>' + 
-                      '<td>' + line[5] + '</td>' + 
-                      '<td>' + line[6] + '</td>' + 
-                      '<td>' + line[7] + '</td>' + 
-                      '<td>' + line[8] + '</td>' +
-                      '</tr>';
+           var row = [];
+           line.forEach(function (entry) {
+               row.push(entry);
+           });
+           table.push(row);
         });
-        display = display + '</table>';
-        
-        return display;
-    }
-    
-    _displayStops (data) {
-        var display = '<span>Block ID: ' + data.block + '</span>' +
-                      '<br />' +
-                      '<span>Route: ' + data.route + '</span>' +
-                      '<br />';
-        display = display + '<table style="width:25%">';
-        display = display + '<tr>' +
-                            '<th>Stop</th>' +
-                            '<th>Time</th>' +
-                            '</tr>';
-        data.result.forEach(function (line) {
-            display = display + '<tr>';                
-            line.forEach(function (entry) {
-                display = display + '<td>' + entry + '</td>';  
-            });
-            display = display + '</tr>';  
-        });
-        display = display + '</table>';
-        
-        return display;
-    }
+        return table;
+    }    
 }
 
 export default App;
