@@ -1,9 +1,3 @@
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 const fs = require('fs');
 
 //==============================================================================
@@ -117,18 +111,18 @@ exports.findStops = function (host, filename, date, constriant, value, res) {
             });
         }
         
-        var block;
-        var route;
+        var block = '';
+        var route = '';
         if (output_list.length !== 0) {
             block = output_list[0][0];
             route = output_list[0][1].slice(0, output_list[0][1].indexOf('-'));
         }
         if (host !== '') {
             var output = '<p>Block ID: ' +
-                 '<a href=\"http://'+ host +'/date/'+date+'/block/'+block+'\">'+block+'</a>' +
+                 '<a href=\"https://'+ host +'/date/'+date+'/block/'+block+'\">'+block+'</a>' +
                  '</p>' + 
                  '<p>Route: ' + 
-                 '<a href=\"http://'+ host +'/date/'+date+'/route/'+route+'\">'+route+'</a>';                 
+                 '<a href=\"https://'+ host +'/date/'+date+'/route/'+route+'\">'+route+'</a>';                 
         
             output_list.forEach(function (stop_array) {
                 output = output + exports.toHTML2(host, date, stop_array);
@@ -159,9 +153,9 @@ exports.toHTML = function (host, date, line_array) {
     var route = line_array[1].slice(0, line_array[1].indexOf('-'));
     var trip = line_array[1].slice(line_array[1].indexOf('-') + 1);
     return '<p>' +
-           '<a href=\"http://'+ host +'/date/'+date+'/block/'+line_array[0]+'\">'+line_array[0]+'</a>' +
-           ', <a href=\"http://'+ host +'/date/'+date+'/route/'+route+'\">'+route+'</a>' +
-           ', <a href=\"http://'+ host +'/date/'+date+'/trip/'+trip+'\">'+trip+'</a>' +
+           '<a href=\"https://'+ host +'/date/'+date+'/block/'+line_array[0]+'\">'+line_array[0]+'</a>' +
+           ', <a href=\"https://'+ host +'/date/'+date+'/route/'+route+'\">'+route+'</a>' +
+           ', <a href=\"https://'+ host +'/date/'+date+'/trip/'+trip+'\">'+trip+'</a>' +
            ', ' + line_array[3] +
            ', ' + line_array[4] +
            ', ' + line_array[5] +
@@ -196,4 +190,4 @@ exports.toJSON2 = function (host, date, line_array) {
 exports.checkFile = function (file) {
     if(fs.existsSync(file)) return true;
     return false;
-}
+};
