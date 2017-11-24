@@ -85,7 +85,7 @@ app.get('/', function (req, res) {
     
     var output = '<p>Google Transit Static Feed Parser for GO Transit</p>' +
                  '<br>' +
-                 '<p>To search the trips of a spcific route: </p>' +
+                 '<p>To search the trips of a specific route: </p>' +
                  '<p>Use the following link format: ' + host + '/date/yyyymmdd/route/xx </p>' +
                  '<p>Example: <a href=\"http://' + host + '/date/' + date + '/route/21\">' +
                  'https://' + host + '/date/' + date + '/route/21</a></p>' +
